@@ -12,7 +12,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import java.util.Timer;
@@ -27,6 +26,7 @@ public class TimerClockView extends View implements View.OnClickListener{
     private Paint mTextPaint;
     private int mClockColor;
     private int mSeconds;
+    private int mSecondsCache;
     private float mCircleRad;
     private int mTextSize;
     private int mTextColor;
@@ -72,6 +72,8 @@ public class TimerClockView extends View implements View.OnClickListener{
         configPaint();
         setOnClickListener(this);
 
+        mSecondsCache = mSeconds;
+
         mAngle = 0;
         mUpdateAngle = 360 / mSeconds;
         mRectF = new RectF(-(mCircleRad + 10),-(mCircleRad + 10),mCircleRad + 10,mCircleRad + 10);
@@ -84,6 +86,8 @@ public class TimerClockView extends View implements View.OnClickListener{
         mTextSize = 60;
         mText = mContext.getString(R.string.start_text);
         mTextColor = Color.BLACK;
+
+        mSecondsCache = mSeconds;
 
         mUpdateAngle = 360 / mSeconds;
         mAngle = 0;
@@ -133,6 +137,9 @@ public class TimerClockView extends View implements View.OnClickListener{
 
         if(mTimerClockState == TIMER_CLOCK_START) {
             canvas.drawArc(mRectF, 0, mAngle, false, mCirclePaint);
+        }else if(mTimerClockState == TIMER_CLOCK_PAUSE){
+            mAngle = mUpdateAngle * (mSecondsCache - mSeconds);
+            canvas.drawArc(mRectF, 0, mAngle, false, mCirclePaint);
         }
 
         Rect bounds = new Rect();
@@ -146,12 +153,23 @@ public class TimerClockView extends View implements View.OnClickListener{
         if(mTimerClockState == TIMER_CLOCK_STOP) {
             mTimer = new Timer(true);
             mTimer.schedule(new ClockTimerTask(), 1000, 1000);
+            mSeconds = mSecondsCache;
             mTimerClockState = TIMER_CLOCK_START;
-        }else{
+            mAngle = 0;
+        }else if(mTimerClockState == TIMER_CLOCK_START){
+            if(mSeconds == 0){
+
+                mTimerClockState = TIMER_CLOCK_STOP;
+            }else{
+                mTimerClockState = TIMER_CLOCK_PAUSE;
+            }
             mTimer.cancel();
             mTimer = null;
-            mTimerClockState = TIMER_CLOCK_STOP;
-          }
+        }else if(mTimerClockState == TIMER_CLOCK_PAUSE){
+            mTimer = new Timer(true);
+            mTimer.schedule(new ClockTimerTask(), 1000, 1000);
+            mTimerClockState = TIMER_CLOCK_START;
+        }
     }
 
     private final class ClockTimerTask extends TimerTask{
@@ -190,6 +208,4 @@ public class TimerClockView extends View implements View.OnClickListener{
     public void removeHandler(){
         mHandler.removeCallbacksAndMessages(null);
     }
-
-
 }
