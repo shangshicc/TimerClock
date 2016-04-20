@@ -14,7 +14,18 @@
     tools:showIn="@layout/activity_main">
 
     <TextView
+        android:id="@+id/title_tv"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"/>
+        android:layout_marginTop="20dp"
+        android:text="计时器"/>
+
+   <com.shangshicc.android.timerclock.TimerClockView
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_below="@id/title_tv"
+       android:layout_centerHorizontal="true"
+       android:layout_marginTop="20dp"/>
 </RelativeLayout>

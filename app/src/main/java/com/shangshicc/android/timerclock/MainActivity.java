@@ -16,8 +16,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TimerClockView view = new TimerClockView(this);
-        setContentView(view);
+        setContentView(R.layout.activity_main);
 
     }
 

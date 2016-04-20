@@ -129,6 +129,31 @@ public class TimerClockView extends View implements View.OnClickListener{
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int measureWidth = measureLength(widthMeasureSpec);
+        int measureHeight = measureLength(heightMeasureSpec);
+        setMeasuredDimension(measureWidth,measureHeight);
+    }
+
+
+    private int measureLength(int measureSpec){
+        int measureMode = MeasureSpec.getMode(measureSpec);
+        int measureLength = MeasureSpec.getSize(measureSpec);
+
+        if(measureMode == MeasureSpec.EXACTLY){
+            return measureLength;
+        }else{
+            int result = 450;
+            if(measureMode == MeasureSpec.AT_MOST){
+                result = Math.min(result,measureLength);
+            }
+
+            return result;
+        }
+    }
+
+    @Override
     protected void onDraw(final Canvas canvas) {
         super.onDraw(canvas);
         canvas.translate(getMeasuredWidth() / 2, getMeasuredHeight() / 2);
@@ -146,7 +171,6 @@ public class TimerClockView extends View implements View.OnClickListener{
         mTextPaint.getTextBounds(mText, 0, mText.length(), bounds);
         canvas.drawText(mText, -bounds.width() / 2, bounds.height() / 2, mTextPaint);
     }
-
 
     @Override
     public void onClick(View v) {
@@ -208,4 +232,7 @@ public class TimerClockView extends View implements View.OnClickListener{
     public void removeHandler(){
         mHandler.removeCallbacksAndMessages(null);
     }
+
+
+
 }
